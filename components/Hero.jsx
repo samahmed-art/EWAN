@@ -13,7 +13,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden bg-gray-900">
+    <div className="relative w-full h-[60vh] md:h-[100vh] overflow-hidden bg-gray-900">
       <video
         ref={videoRef}
         autoPlay

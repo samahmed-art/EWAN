@@ -1,7 +1,44 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Phone, Mail, Camera } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
 export default function ContactUs() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !email || !message) {
+      setErrorMsg("الرجاء تعبئة جميع الحقول");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const { error } = await supabase
+      .from('messages')
+      .insert([{ name, email, message }]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error("Error inserting message:", error);
+      setErrorMsg("حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
+    } else {
+      setSuccessMsg("تم إرسال رسالتك بنجاح");
+      setName("");
+      setEmail("");
+      setMessage("");
+      setTimeout(() => setSuccessMsg(""), 5000);
+    }
+  };
   return (
     <section className="py-20 relative bg-white">
       {/* Subtle gold separator at top */}
@@ -41,11 +78,23 @@ export default function ContactUs() {
           <div className="w-full lg:w-6/12 mt-8 lg:mt-0">
             <div className="bg-[#fcfcfc] p-8 lg:p-10 rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.05)] border border-gray-100">
               <h3 className="text-xl font-bold text-ewan-blue text-center mb-8">للاستفسارات والاقتراحات</h3>
-              <form className="space-y-5">
+              <form className="space-y-5" onSubmit={handleSubmit}>
+                {successMsg && (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center font-bold">
+                    {successMsg}
+                  </div>
+                )}
+                {errorMsg && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center font-bold">
+                    {errorMsg}
+                  </div>
+                )}
                 <div>
                   <input 
                     type="text" 
                     placeholder="الاسم الكامل" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="w-full px-5 py-3.5 bg-gray-100/80 rounded-md border-transparent focus:border-ewan-gold focus:ring-1 focus:ring-ewan-gold outline-none transition-colors text-gray-800 placeholder:text-gray-400 font-medium"
                   />
                 </div>
@@ -53,6 +102,8 @@ export default function ContactUs() {
                   <input 
                     type="email" 
                     placeholder="الالكتروني البريد" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-5 py-3.5 bg-gray-100/80 rounded-md border-transparent focus:border-ewan-gold focus:ring-1 focus:ring-ewan-gold outline-none transition-colors text-gray-800 placeholder:text-gray-400 font-medium"
                     dir="rtl"
                   />
@@ -61,14 +112,17 @@ export default function ContactUs() {
                   <textarea 
                     rows="4"
                     placeholder="الاستفسار" 
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     className="w-full px-5 py-3.5 bg-gray-100/80 rounded-md border-transparent focus:border-ewan-gold focus:ring-1 focus:ring-ewan-gold outline-none transition-colors resize-none text-gray-800 placeholder:text-gray-400 font-medium"
                   ></textarea>
                 </div>
                 <button 
-                  type="button" 
-                  className="w-full bg-ewan-gold text-white font-bold py-3.5 px-6 rounded-md hover:bg-[#b59837] shadow-sm transition-colors text-lg mt-2"
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full bg-ewan-gold text-white font-bold py-3.5 px-6 rounded-md hover:bg-[#b59837] shadow-sm transition-colors text-lg mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  ارسال الاستفسار
+                  {isSubmitting ? "جاري الإرسال..." : "ارسال الاستفسار"}
                 </button>
               </form>
             </div>

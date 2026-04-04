@@ -1,4 +1,6 @@
-export default function Navbar() {
+import Link from "next/link";
+
+export default function Navbar({ activePage = "home" }) {
   return (
     <nav className="fixed top-0 w-full z-50 pt-6 px-8">
       {/* المستطيل الكحلي العائم */}
@@ -16,13 +18,15 @@ export default function Navbar() {
         <ul className="hidden md:flex flex-row-reverse items-center space-x-25 space-x-reverse text-white text-xl font-bold">
        
           <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">دعم العملاء</li>
-                    <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">نبذة عنا</li>
+          <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">نبذة عنا</li>
 
-          <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">القاعات</li>
-          <li className="relative group cursor-pointer text-[#C8A97E]">
-            <span>الرئيسية</span>
-            {/* الخط تحت الرئيسية */}
-            <div className="absolute -bottom-2 right-0 w-full h-1 bg-[#C8A97E] rounded-full shadow-[0_0_10px_#C8A97E]"></div>
+          <li className={`transition-colors cursor-pointer ${activePage === 'halls' ? 'text-[#C8A97E] relative group' : 'hover:text-[#C8A97E]'}`}>
+            <Link href="/halls">القاعات</Link>
+            {activePage === 'halls' && <div className="absolute -bottom-2 right-0 w-full h-1 bg-[#C8A97E] rounded-full shadow-[0_0_10px_#C8A97E]"></div>}
+          </li>
+          <li className={`transition-colors cursor-pointer ${activePage === 'home' ? 'text-[#C8A97E] relative group' : 'hover:text-[#C8A97E]'}`}>
+            <Link href="/">الرئيسية</Link>
+            {activePage === 'home' && <div className="absolute -bottom-2 right-0 w-full h-1 bg-[#C8A97E] rounded-full shadow-[0_0_10px_#C8A97E]"></div>}
           </li>
         </ul>
 

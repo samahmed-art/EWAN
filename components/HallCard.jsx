@@ -9,7 +9,7 @@ export default function HallCard({ image, name, capacity, location, price, isFea
         <img src="/hall.jpg" alt={name} className="w-full h-48 object-cover" />
         {isFeatured && (
           <span className="absolute top-3 right-3 bg-gray-600/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-semibold">
-            الأكثر تميزاً
+            الأكثر حجزاً
           </span>
         )}
       </div>

@@ -6,12 +6,11 @@ export default function Navbar({ activePage = "home" }) {
       {/* المستطيل الكحلي العائم */}
       <div className="max-w-[2000px] mx-auto h-24 bg-[rgba(201, 179, 107, 0.6)]/85 backdrop-blur-md rounded-[20px] border border-white/10 shadow-[0_15px_35px_rgba(26, 54, 93, 0.4)] flex items-center justify-between px-10 flex-row-reverse">
           {/* 3. الزر (أقصى اليسار) */}
-        <div className="flex-shrink-0">
-          <button className="bg-[#C8A97E] hover:bg-[#b0936b] text-white px-8 py-3 rounded-xl font-bold text-lg shadow-lg transition-all transform hover:scale-105 active:scale-95">
-            تسجيل دخول
-          </button>
-        </div>
-
+     <Link href="/login">
+  <button className="bg-[#C8A97E] hover:bg-[#b0936b] text-white px-8 py-2.5 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95">
+    تسجيل دخول
+  </button>
+</Link>
         
 
         {/* 2. القائمة (في المنتصف) */}

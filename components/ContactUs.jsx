@@ -22,10 +22,9 @@ export default function ContactUs() {
     setErrorMsg("");
     setSuccessMsg("");
 
-    const { error } = await supabase
-      .from('messages')
-      .insert([{ name, email, message }]);
-
+   const { error } = await supabase
+  .from('messages')
+  .insert([{ full_name: name, email, message }]); // غيرنا name إلى full_name ليطابق الجدول
     setIsSubmitting(false);
 
     if (error) {

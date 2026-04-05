@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import { Users, MapPin, BadgeDollarSign } from "lucide-react";
+import Link from "next/link";
 
-export default function HallCard({ image, name, capacity, location, price, isFeatured }) {
+export default function HallCard({ id, image, name, capacity, location, price, isFeatured }) {
   return (
     <div className="bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden flex flex-col items-center transition-transform hover:scale-[1.02]">
       <div className="w-full relative">
@@ -31,9 +32,11 @@ export default function HallCard({ image, name, capacity, location, price, isFea
           </div>
         </div>
         
-        <button className="mt-auto w-full max-w-[220px] border-2 border-ewan-gold text-ewan-gold hover:bg-ewan-gold hover:text-white transition-colors py-2 rounded-md font-bold text-sm">
-          عرض التفاصيل
-        </button>
+        <Link href={`/halls/${id || 1}`} passHref className="mt-auto w-full max-w-[220px]">
+          <button className="w-full border-2 border-ewan-gold text-ewan-gold hover:bg-ewan-gold hover:text-white transition-colors py-2 rounded-md font-bold text-sm">
+            عرض التفاصيل
+          </button>
+        </Link>
       </div>
     </div>
   );

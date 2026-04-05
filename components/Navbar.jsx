@@ -1,34 +1,76 @@
+"use client";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-
 export default function Navbar({ activePage = "home" }) {
+  const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+  };
+  checkUser();
+
+  // هذا السطر يراقب الدخول والخروج ويحدث الشاشة فوراً
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUser(session?.user ?? null);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
   return (
     <nav className="fixed top-0 w-full z-50 pt-6 px-8">
       {/* المستطيل الكحلي العائم */}
       <div className="max-w-[2000px] mx-auto h-24 bg-[rgba(201, 179, 107, 0.6)]/85 backdrop-blur-md rounded-[20px] border border-white/10 shadow-[0_15px_35px_rgba(26, 54, 93, 0.4)] flex items-center justify-between px-10 flex-row-reverse">
-          {/* 3. الزر (أقصى اليسار) */}
-     <Link href="/login">
-  <button className="bg-[#C8A97E] hover:bg-[#b0936b] text-white px-8 py-2.5 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95">
-    تسجيل دخول
-  </button>
-</Link>
+     <div className="flex-shrink-0">
+  {user ? (
+    // شكل البروفايل إذا سجل دخوله
+    <div className="flex items-center gap-3 flex-row-reverse">
+      <div className="w-12 h-12 rounded-full border-2 border-[#C8A97E] overflow-hidden bg-gray-800">
+        <img 
+          src={user.user_metadata?.avatar_url || "/default-avatar.png"} 
+          alt="User" 
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="text-right leading-tight">
+        <p className="text-[#C8A97E] font-bold text-sm">
+          {user.user_metadata?.full_name || "مستخدم إيوان"}
+        </p>
+      </div>
+    </div>
+  ) : (
+    // شكل الزر إذا لم يسجل دخوله
+    <Link href="/login">
+      <button className="bg-[#C8A97E] hover:bg-[#b0936b] text-white px-8 py-2.5 rounded-xl font-bold text-lg shadow-lg">
+        تسجيل دخول
+      </button>
+    </Link>
+  )}
+</div>
         
 
         {/* 2. القائمة (في المنتصف) */}
-        <ul className="hidden md:flex flex-row-reverse items-center space-x-25 space-x-reverse text-white text-xl font-bold">
-       
-          <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">دعم العملاء</li>
-          <li className="hover:text-[#C8A97E] transition-colors cursor-pointer">نبذة عنا</li>
-
-          <li className={`transition-colors cursor-pointer ${activePage === 'halls' ? 'text-[#C8A97E] relative group' : 'hover:text-[#C8A97E]'}`}>
-            <Link href="/halls">القاعات</Link>
-            {activePage === 'halls' && <div className="absolute -bottom-2 right-0 w-full h-1 bg-[#C8A97E] rounded-full shadow-[0_0_10px_#C8A97E]"></div>}
-          </li>
-          <li className={`transition-colors cursor-pointer ${activePage === 'home' ? 'text-[#C8A97E] relative group' : 'hover:text-[#C8A97E]'}`}>
-            <Link href="/">الرئيسية</Link>
-            {activePage === 'home' && <div className="absolute -bottom-2 right-0 w-full h-1 bg-[#C8A97E] rounded-full shadow-[0_0_10px_#C8A97E]"></div>}
-          </li>
-        </ul>
-
+<ul className="hidden md:flex flex-row-reverse items-center space-x-12 space-x-reverse text-white text-xl font-bold">
+ 
+  {/* الرئيسية ترجعنا لأعلى الصفحة */}
+   <li>
+    <a href="#contact" className="hover:text-[#C8A97E] transition-colors">دعم العملاء</a>
+  </li>
+  <li>
+    <a href="#about" className="hover:text-[#C8A97E] transition-colors">نبذة عنا</a>
+  </li>
+   <li>
+    <a href="#halls" className="hover:text-[#C8A97E] transition-colors">القاعات</a>
+  </li>
+  
+  <li onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="cursor-pointer text-[#C8A97E]">الرئيسية</li>
+  
+  {/* الروابط الأخرى تشير للـ IDs التي وضعناها */}
+ 
+ 
+</ul>
       {/* 1. اللوجو (أقصى اليمين) */}
         <div className="flex-shrink-0">
           <img src="/logo.png" alt="إيوان" className="h-25 w-auto object-contain brightness-125" />

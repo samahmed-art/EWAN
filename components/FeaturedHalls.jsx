@@ -1,6 +1,6 @@
 import React from "react";
 import HallCard from "./HallCard";
-
+import Link from "next/link";
 export default function FeaturedHalls() {
   const halls = [
     { id: 1, name: "قاعة الريان", capacity: 500, location: "الشرج", price: "10,000" },
@@ -23,6 +23,7 @@ export default function FeaturedHalls() {
           {halls.map((hall) => (
             <HallCard 
               key={hall.id}
+              id={hall.id}
               image={`https://via.placeholder.com/400x300/e2e8f0/384252?text=Hall+${hall.id}`}
               name={hall.name}
               capacity={hall.capacity}
@@ -33,11 +34,13 @@ export default function FeaturedHalls() {
           ))}
         </div>
         
-        <div className="mt-14 text-center">
-          <button className="bg-ewan-gold text-white font-bold py-3.5 px-12 rounded-md hover:bg-[#b59837] shadow-md transition-colors text-lg">
-            تصفح أكثر
-          </button>
-        </div>
+        <div className="text-center mt-16">
+  <Link href="/halls">
+    <button className="px-12 py-4 bg-white border-2 border-[#C8A97E] text-[#C8A97E] font-black text-xl rounded-2xl hover:bg-[#C8A97E] hover:text-white transition-all shadow-lg hover:shadow-[0_10px_25px_rgba(200,169,126,0.3)] active:scale-95">
+      تصفح أكثر
+    </button>
+  </Link>
+</div>
       </div>
     </section>
   );

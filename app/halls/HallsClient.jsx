@@ -40,6 +40,7 @@ export default function HallsClient({ initialHalls }) {
           {filteredHalls.map((hall) => (
             <HallCard 
               key={hall.id || hall.name}
+              id={hall.id}
               image={hall.image || `https://via.placeholder.com/400x300/e2e8f0/384252?text=${encodeURIComponent(hall.name || 'Hall')}`}
               name={hall.name || "قاعة غير معروفة"}
               capacity={hall.capacity || 500}

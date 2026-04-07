@@ -62,7 +62,7 @@ export default function HallDetailsClient({ hall }) {
         setIsChecking(true);
         const { data, error } = await supabase
           .from('bookings')
-          .select('date, slot')
+          .select('booking_date, time_slot')
           .eq('hall_id', hall.id);
           
         if (!error && data) {
@@ -81,30 +81,35 @@ export default function HallDetailsClient({ hall }) {
   // Confirmation Flow
   const handleConfirmBooking = async () => {
     setIsSubmitting(true);
-    
-    // Attempt mapping to authenticated user if session exists
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id || null;
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    
-    const { error } = await supabase.from('bookings').insert({
-      hall_id: hall.id,
-      date: dateStr,
-      slot: selectedSlot,
-      services: selectedServices, // Insert array directly
-      total_price: totalPrice,
-      status: 'pending',
-      user_id: userId
-    });
+    if (userError || !user) {
+      alert("يرجى تسجيل الدخول أولاً لإتمام الحجز");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const dateStr = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+
+    const { error } = await supabase.from('bookings').insert([
+      {
+        hall_id: Number(hall.id),
+        user_id: user.id,
+        booking_date: dateStr, 
+        time_slot: selectedSlot,
+        services: selectedServices,
+        total_price: Number(totalPrice),
+        status: 'pending'
+      }
+    ]);
 
     setIsSubmitting(false);
 
     if (error) {
-      console.error("Booking submission error:", error.message);
-      alert('حدث خطأ أثناء تأكيد الحجز. تأكد من جدول bookings الخاص بك.');
+      console.error("Insert Error:", error);
+      alert("حدث خطأ أثناء الحجز: " + error.message);
     } else {
-      setBookingStep(3); // Success Screen
+      setBookingStep(3);
     }
   };
 
@@ -130,9 +135,9 @@ export default function HallDetailsClient({ hall }) {
           const cloneDay = day;
           
           const dateStr = format(cloneDay, 'yyyy-MM-dd');
-          const dayBookings = existingBookings.filter(b => b.date === dateStr);
-          const hasMorning = dayBookings.some(b => b.slot === "صباحاً");
-          const hasEvening = dayBookings.some(b => b.slot === "مساءً");
+          const dayBookings = existingBookings.filter(b => b.booking_date === dateStr);
+          const hasMorning = dayBookings.some(b => b.time_slot === "صباحاً");
+          const hasEvening = dayBookings.some(b => b.time_slot === "مساءً");
           const isFullyBooked = hasMorning && hasEvening;
           
           const isPast = isBefore(cloneDay, startOfDay(new Date()));
@@ -337,9 +342,9 @@ export default function HallDetailsClient({ hall }) {
           {/* STEP 2: SLOTS & SERVICES POP-UP */}
           {bookingStep === 2 && (() => {
             const dateStr = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
-            const dayBookings = existingBookings.filter(b => b.date === dateStr);
-            const morningBooked = dayBookings.some(b => b.slot === "صباحاً");
-            const eveningBooked = dayBookings.some(b => b.slot === "مساءً");
+            const dayBookings = existingBookings.filter(b => b.booking_date === dateStr);
+            const morningBooked = dayBookings.some(b => b.time_slot === "صباحاً");
+            const eveningBooked = dayBookings.some(b => b.time_slot === "مساءً");
 
             return (
               <div className="bg-[#dcdcd8] rounded-xl w-full max-w-[32rem] p-8 shadow-2xl relative animate-in slide-in-from-right-4 duration-300">

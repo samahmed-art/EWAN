@@ -46,11 +46,13 @@ export default function HallDetailsClient({ hall }) {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
 
   // Mock highly stylized images array
-  const images = [
-    hall?.image || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2998&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=2938&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2969&auto=format&fit=crop"
-  ];
+ // مصفوفة الصور تشير إلى الملفات في مجلد public
+const images = [
+  "/hall5.jpg", // تأكد من مطابقة الامتداد سواء .jpg أو .png
+  "/hall4.png",
+  "/hall3.png",
+  "/hall1.jpg"
+];
 
   const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);

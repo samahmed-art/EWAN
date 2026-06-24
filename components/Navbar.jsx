@@ -5,14 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 export default function Navbar({ activePage = "home" }) {
   const [user, setUser] = useState(null);
-const router = useRouter();
-
-  const handleLogout = async () => {
-    if (window.confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
-      await supabase.auth.signOut();
-      router.push("/");
-    }
-  };
+  const [activeSection, setActiveSection] = useState("home");
+  const router = useRouter();
 useEffect(() => {
   // 1. جلب الجلسة الحالية مرة واحدة فوراً (أخف من getUser)
   const session = supabase.auth.getSession();
@@ -27,11 +21,41 @@ useEffect(() => {
     subscription.unsubscribe();
   };
 }, []);
+
+useEffect(() => {
+  const sections = ["home", "halls", "about", "contact"];
+  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    },
+    {
+      root: null,
+      rootMargin: "-40% 0px -60% 0px",
+      threshold: 0
+    }
+  );
+
+  sections.forEach((id) => {
+    const element = document.getElementById(id);
+    if (element) observer.observe(element);
+  });
+
+  return () => {
+    sections.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.unobserve(element);
+    });
+  };
+}, []);
   return (
     <nav className="fixed top-0 w-full z-50 pt-6 px-8">
       {/* المستطيل الكحلي العائم */}
-      <div className="max-w-[2000px] mx-auto h-24 bg-[rgba(201, 179, 107, 0.6)]/85 backdrop-blur-md rounded-[20px] border border-white/10 shadow-[0_15px_35px_rgba(26, 54, 93, 0.4)] flex items-center justify-between px-10 flex-row-reverse">
-     <div className="flex-shrink-0">
+<div className="max-w-[2000px] mx-auto h-24 bg-[#0A1128] border border-[#C8A97E]/40 backdrop-blur-xl rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between px-10 flex-row-reverse">     <div className="flex-shrink-0">
  {user ? (
   // جعلنا هذا القسم بالكامل عبارة عن رابط للداشبورد
   <div className="flex items-center gap-4 flex-row-reverse">
@@ -47,20 +71,13 @@ useEffect(() => {
       </div>
     </Link>
 
-    {/* 2. الاسم وزر الخروج */}
+    {/* 2. الاسم */}
     <div className="text-right flex flex-col items-end">
       <Link href="/dashboard">
-        <p className="text-[#C8A97E] font-bold text-sm cursor-pointer hover:underline">
+        <p className="text-[#C8A97E] font-bold text-sm cursor-pointer hover:underline mt-1.5">
           {user.user_metadata?.full_name || "مستخدم إيوان"}
         </p>
       </Link>
-      
-      <button 
-        onClick={handleLogout}
-        className="text-white/60 hover:text-red-400 text-[10px] font-medium transition-colors mt-1"
-      >
-        تسجيل الخروج
-      </button>
     </div>
   </div>
 ) : (
@@ -74,25 +91,42 @@ useEffect(() => {
         
 
         {/* 2. القائمة (في المنتصف) */}
-<ul className="hidden md:flex flex-row-reverse items-center space-x-12 space-x-reverse text-white text-xl font-bold">
- 
-  {/* الرئيسية ترجعنا لأعلى الصفحة */}
-   <li>
-    <a href="#contact" className="hover:text-[#C8A97E] transition-colors">دعم العملاء</a>
-  </li>
-  <li>
-    <a href="#about" className="hover:text-[#C8A97E] transition-colors">نبذة عنا</a>
-  </li>
-   <li>
-    <a href="#halls" className="hover:text-[#C8A97E] transition-colors">القاعات</a>
-  </li>
-  
-  <li onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="cursor-pointer text-[#C8A97E]">الرئيسية</li>
-  
-  {/* الروابط الأخرى تشير للـ IDs التي وضعناها */}
- 
- 
-</ul>
+        <ul className="hidden md:flex flex-row-reverse items-center space-x-12 space-x-reverse text-xl font-bold">
+          {[
+
+
+
+                { id: "contact", label: "دعم العملاء" },
+                                        { id: "about", label: "نبذة عنا" },
+
+                                        { id: "halls", label: "القاعات" },
+
+                    { id: "home", label: "الرئيسية" },
+
+          ].map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className={`transition-colors duration-300 ${
+                  activeSection === item.id ? "text-[#C8A97E]" : "text-white hover:text-[#C8A97E]"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById(item.id);
+                  if (target) {
+                    target.scrollIntoView({ behavior: "smooth" });
+                  } else if (item.id === "home") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  } else {
+                    router.push(`/#${item.id}`);
+                  }
+                }}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       {/* 1. اللوجو (أقصى اليمين) */}
         <div className="flex-shrink-0">
           <img src="/logo.png" alt="إيوان" className="h-25 w-auto object-contain brightness-125" />

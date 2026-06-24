@@ -10,8 +10,10 @@ export default function Page() {
     <main className="min-h-screen bg-white">
       <Navbar />
       
-      {/* سكشن الهيرو - عادة لا يحتاج ID لأن زر "الرئيسية" يرفعنا لأعلى الصفحة */}
-      <Hero />
+      {/* سكشن الهيرو */}
+      <section id="home">
+        <Hero />
+      </section>
 
       {/* قسم القاعات */}
       <section id="halls">

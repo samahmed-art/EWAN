@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle, Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, Calendar, Clock, CheckCircle, XCircle, LogOut } from "lucide-react";
 
 const BookingCard = ({ booking, onCancel, onEdit, profile }) => {
   const [timeLeft, setTimeLeft] = useState(""); 
@@ -164,6 +164,13 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const handleLogout = async () => {
+    if (window.confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
+      await supabase.auth.signOut();
+      router.push("/");
+    }
+  };
+
   useEffect(() => {
     getUserDataAndBookings();
   }, []);
@@ -279,12 +286,23 @@ export default function UserDashboard() {
       <div className="w-full max-w-5xl mb-12 mt-6 flex flex-col md:flex-row justify-between items-center md:items-end border-b-2 border-[#C8A97E]/30 pb-6 z-20 gap-6">
          <h1 className="text-4xl md:text-5xl font-black text-white drop-shadow-md">إدارة حجوزاتك</h1>
          
-         <div className="bg-[#1A365D] border-2 border-[#C8A97E] text-white px-6 py-2.5 rounded-2xl font-bold shadow-lg flex items-center gap-3">
-            <XCircle className="w-5 h-5 text-[#C8A97E]" />
-            <span>عداد الإلغاءات الآمنة:</span>
-            <span className={`text-2xl font-black px-2 py-0.5 rounded-lg ${profile?.cancel_count >= 4 ? 'bg-red-500' : 'bg-transparent text-[#C8A97E]'}`}>
-              {profile?.cancel_count || 0}/5
-            </span>
+         <div className="flex flex-col md:flex-row items-center gap-4 border-t-2 md:border-t-0 border-[#C8A97E]/20 pt-4 md:pt-0 w-full md:w-auto mt-4 md:mt-0 justify-center">
+           {/* Logout Button */}
+           <button 
+             onClick={handleLogout}
+             className="bg-red-500/10 border border-red-500/50 text-red-200 hover:bg-red-600 hover:border-red-500 hover:text-white transition-all px-5 py-2.5 rounded-2xl font-bold shadow-md flex items-center gap-2 active:scale-95"
+           >
+             <LogOut className="w-5 h-5" />
+             <span>تسجيل الخروج</span>
+           </button>
+
+           <div className="bg-[#1A365D] border-2 border-[#C8A97E] text-white px-6 py-2.5 rounded-2xl font-bold shadow-lg flex items-center gap-3">
+              <XCircle className="w-5 h-5 text-[#C8A97E]" />
+              <span>عداد الإلغاءات الآمنة:</span>
+              <span className={`text-2xl font-black px-2 py-0.5 rounded-lg ${profile?.cancel_count >= 4 ? 'bg-red-500' : 'bg-transparent text-[#C8A97E]'}`}>
+                {profile?.cancel_count || 0}/5
+              </span>
+           </div>
          </div>
       </div>
 

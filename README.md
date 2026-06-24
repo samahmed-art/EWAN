@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+موقع حجوزات القاعات الأفراح فيه لوحة تحكم للمضيف عشان يحجز ويشوف القاعه الي حجزها ولوحة تحكم للادمن عشان يشوف عدد الحجوزات لليوم وهكذا وبالتالي المضيف مايحتاج يروح يدور عن القاعات ويسال لو كانت محجوزه في الوقت الي يبيه او لا،  يدخل ويحل عنده تقويم داينمك فيه الايام الي مافيها حجز ويقدر يحجز فيها وبرضو يسهل لصاحب القاعه معرفه عدد الحجوزات لليوم ويراجع الحسابات حقه
 
+
+فريم ورك وداتابيس الموقع :
+React.js, Node.js, supabase
 ## Getting Started
 
 First, run the development server:
